@@ -1,0 +1,52 @@
+{
+  "name": "thunkify-mongodb",
+  "version": "0.2.0",
+  "description": "Thunkify MongoDB native driver, use it with sweet generator aftertaste",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "make test",
+    "lint": "make lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yvele/node-thunkify-mongodb"
+  },
+  "keywords": [
+    "mongodb",
+    "thunk",
+    "thunkify",
+    "co",
+    "generator",
+    "generators",
+    "promise",
+    "yield",
+    "wrapper",
+    "wrap"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Yves Merlicco"
+  },
+  "dependencies": {
+    "thunkify-object": "^0.2.0"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "co-mocha": "^1.1.0",
+    "istanbul": "*",
+    "mocha": "*",
+    "mongodb": "^2.0.33",
+    "should": "*"
+  },
+  "gitHead": "16f4c6902995353d0da7cc3cdb9f3c56c4c3a7c5",
+  "readme": "[![NPM version][npm-version-image]][npm-url]\n[![MIT License][license-image]][license-url]\n[![Build Status][travis-image]][travis-url]\n[![Test Coverage][coveralls-image]][coveralls-url]\n\n# thunkify-mongodb\n\n[Installation](#installation) | [Examples](#examples) | [Supported MongoDB versions](#supported-mongodb-versions) | [Roadmap](#roadmap) | [Under the hood](#under-the-hood) | [Running tests](#running-tests) | [License](#license)\n\nGive [MongoDB native driver](http://mongodb.github.io/node-mongodb-native/) 2.0 a sweet generator aftertaste :lollipop:\n\nWrapper on [MongoDB native driver](http://mongodb.github.io/node-mongodb-native/) to provide thunk methods, useful for generator-based flow control such as [co](https://github.com/visionmedia/co), [Koa](http://koajs.com/), etc.\n\n## Installation\n\n```\n$ npm install thunkify-mongodb --save\n```\n\n## Examples\n\n[Basic](#basic) | [Events](#events) | [Bulk Operations](#bulk-operations)\n\n### Basic\n\n```js\nvar MongoClient = require('thunkify-mongodb').MongoClient;\nvar mongodb = require('mongodb');\n\nfunction* insertSomething(url) {\n  var mongoClient = new MongoClient(new mongodb.MongoClient());\n\n  var db = yield mongoClient.connect(url);\n\n  var collection = yield db.collection('Documents');\n  yield collection.insertOne({ some: 'thing' });\n\n  yield db.close();\n}\n```\n\n### Events\n\nAll [EventEmitter methods](https://iojs.org/api/events.html#events_class_events_eventemitter) are wrapped.\n\nYou can use `on` and `once` methods as generators:\n\n```js\nyield db.on('close');\n```\n\nYou can also use them with a callback:\n\n```js\ndb.on('close', function() {\n\n});\n```\n\n### Bulk Operations\n\n```js\nvar MongoClient = require('thunkify-mongodb').MongoClient;\nvar mongodb = require('mongodb');\n\nfunction* doBulk(url) {\n  var mongoClient = new MongoClient(new mongodb.MongoClient());\n\n  var db = yield mongoClient.connect(url);\n\n  var collection = yield db.collection('Documents');\n\n  var batch = collection.initializeOrderedBulkOp();\n  batch.insert({a:1});\n  batch.find({a:1}).updateOne({$set: {b:1}});\n  batch.find({a:2}).upsert().updateOne({$set: {b:2}});\n  batch.insert({a:3});\n  batch.find({a:3}).delete({a:3});\n\n  // Execute the operations\n  var result = yield batch.execute();\n\n  yield db.close();\n\n  return result;\n}\n```\n\n\n## Supported MongoDB versions\n\n* All 2.X.X versions of MongoDB Native Driver are supported.\n\n\n## Roadmap\n\nAggregationCursor, GridStore, Mongos, etc. coming soon. Feel free to PR.\n\n\n## Under the hood\n\n[thunkify-object](https://github.com/yvele/node-thunkify-object) is used as a thunk wrapper engine.\n\n\n## Running tests\n\nYou need a running MongoDB instance on `mongodb://localhost:27017/thunkify-mongodb-test` to run all the tests.\n\n```\n$ make test\n```\n\nWith code coverage.\n\n```\n$ make test-cov\n```\n\n## License\n\nThunkify-mongodb is freely distributable under the terms of the [MIT license](LICENSE).\n\n[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat\n[license-url]: LICENSE\n\n[npm-url]: https://npmjs.org/package/thunkify-mongodb\n[npm-version-image]: http://img.shields.io/npm/v/thunkify-mongodb.svg?style=flat\n\n[travis-url]: http://travis-ci.org/yvele/node-thunkify-mongodb\n[travis-image]: http://img.shields.io/travis/yvele/node-thunkify-mongodb.svg?style=flat\n\n[coveralls-url]: https://coveralls.io/r/yvele/node-thunkify-mongodb\n[coveralls-image]: https://img.shields.io/coveralls/yvele/node-thunkify-mongodb.svg?style=flat\n",
+  "readmeFilename": "Readme.md",
+  "bugs": {
+    "url": "https://github.com/yvele/node-thunkify-mongodb/issues"
+  },
+  "homepage": "https://github.com/yvele/node-thunkify-mongodb",
+  "_id": "thunkify-mongodb@0.2.0",
+  "_shasum": "ef092e2a41f473d8059d942fc1c388f125f51688",
+  "_from": "git://github.com/jbielick/node-thunkify-mongodb.git#16f4c6902995353d0da7cc3cdb9f3c56c4c3a7c5",
+  "_resolved": "git://github.com/jbielick/node-thunkify-mongodb.git#16f4c6902995353d0da7cc3cdb9f3c56c4c3a7c5"
+}
